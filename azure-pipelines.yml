@@ -41,28 +41,6 @@ jobs:
       sha256sum ./llvmlibs-linux.tar.gz | awk '{ print $1 }' >> llvmlibs-linux.tar.gz.sha256
     displayName: Package LLVM Libraries
 
-  - task: GitHubRelease@0
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-    inputs:
-      gitHubConnection: JohnHolmesII
-      repositoryName: RPCS3/llvm-mirror
-      action: edit # Options: create, edit, delete
-      target: '$(Build.SourceVersion)' # Required when action == Create || Action == Edit
-      tagSource: auto # Required when action == Create# Options: auto, manual
-      #tagPattern: # Optional
-      tag: 'custom-build' # Required when action == Edit || Action == Delete || TagSource == Manual
-      title: 'Linux Build' # Optional
-      #releaseNotesSource: 'file' # Optional. Options: file, input
-      #releaseNotesFile: # Optional
-      #releaseNotes: # Optional
-      assets: 'build/dest/llvmlibs-linux*' # Optional
-      assetUploadMode: delete # Optional. Options: delete, replace
-      #isDraft: false # Optional
-      #isPreRelease: true # Optional
-      #addChangeLog: true # Optional
-      #compareWith: 'lastFullRelease' # Required when addChangeLog == True. Options: lastFullRelease, lastRelease, lastReleaseByTag
-      #releaseTag: # Required when compareWith == LastReleaseByTag
-
 - job: build_win32
   displayName: Win32 Build
   timeoutInMinutes: 0
@@ -114,17 +92,3 @@ jobs:
       cd llvm_out/build
       sha256sum llvmlibs_mt.7z | awk '{ print $1 }' > llvmlibs_mt.7z.sha256
     displayName: Generate sha256
-
-  - task: GitHubRelease@0
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-    inputs:
-      gitHubConnection: JohnHolmesII
-      repositoryName: $(Build.Repository.Name)
-      action: edit
-      target: '$(Build.SourceVersion)'
-      tagSource: auto
-      tag: 'custom-build-win'
-      title: 'Windows Build'
-      assets: 'llvm_out/build/llvmlibs_mt.*'
-      assetUploadMode: delete
-
